@@ -551,6 +551,9 @@ Amr::InitAmr ()
 #undef STRIP
     }
 
+    regrid_level0_int = 1;
+    pp.query("regrid_level0_int", regrid_level0_int);
+
     loadbalance_with_workestimates = 0;
     pp.query("loadbalance_with_workestimates", loadbalance_with_workestimates);
 
@@ -2049,6 +2052,15 @@ Amr::timeStep (int  level,
             }
             if (old_finest > finest_level) {
                 lev_top = std::min(finest_level, max_level - 1);
+            }
+        }
+
+        if (max_level == 0 && regrid_level0_int > 0 && !force_regrid_level_zero)
+        {
+            if (level_count[0] >= regrid_level0_int)
+            {
+                regrid_level_0_on_restart();
+                level_count[0] = 0;
             }
         }
 
